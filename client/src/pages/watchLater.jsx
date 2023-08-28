@@ -6,7 +6,8 @@ const MovieWatchLater = () => {
   const [movies, setMovies] = useState([]);
   useEffect(() => {
     getAllData();
-    console.log(movies);
+    console.log(movies.length + 1, "r");
+
   }, []);
   const getAllData = async () => {
     const movieDb = JSON.parse(localStorage.getItem("movieDb"));
@@ -15,7 +16,7 @@ const MovieWatchLater = () => {
       headers: { Authorization: movieDb?.token }
     })
     setMovies(response?.data[0].movies)
-    console.log(response?.data[0].movies, "====data");
+    // localStorage.setItem("length", response?.data[0].movies.length)
   }
 
 
@@ -23,14 +24,14 @@ const MovieWatchLater = () => {
 
   return (
     <>
-      <Header />
+      <Header length={movies.length + 1} hidden={false} />
       <div className="container mx-auto mt-16 py-8">
         <h1 className="text-2xl font-bold mb-4">Movie Watch Later</h1>
         <div className="flex w-full flex-col justify-center items-center">
 
           <div className=' grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-            {movies.length != 0 &&  (movies?.map((movie) => (
-              
+            {movies.length != 0 && (movies?.map((movie) => (
+
               <MovieCard key={movie._id}
                 id={movie._id}
                 imageUrl={movie.imageName}

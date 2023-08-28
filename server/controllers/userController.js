@@ -7,8 +7,12 @@ const {
 } = require("../utlisfiles/bscrpt");
 const { generateAccessToken } = require("../utlisfiles/jwt");
 const genreModel = require("../models/genreModel");
+const { generateVerificationCode } = require("../utlisfiles/code");
+const { sendPasswordResetEmailNodeMail } = require("../utlisfiles/nodemailer");
 // const UserModal = require("../models/UserModal");
 //!--------------------------------------------------------------------------------
+
+var PasscodeVerificationData = {};
 const login = async (req, res) => {
   try {
     const { password, email } = req.body;
@@ -98,7 +102,7 @@ const addWatchLatter = async (req, res) => {
 
     if (user.movies.includes(movieId)) {
       // Movie ID already exists in the array, do not add again
-      res.status(201).json({message:"already in watchLatter"});
+      res.status(201).json({ message: "already in watchLatter" });
       console.log(user, "===");
     } else {
       const watchLaterList = await userModel.findByIdAndUpdate(
@@ -118,5 +122,56 @@ const addWatchLatter = async (req, res) => {
     });
   }
 };
+const forgotPassword = async (req, res) => {
+  try {
+    try {
+      const { mail } = req.body;
 
-module.exports = { login, signup, addWatchLatter, AllWatchLatter };
+      const isMailExist = await userModel.findOne({ email: mail });
+
+      if (isMailExist == null) {
+        res
+          .status(400)
+          .json({ message: `No user found with email: ${mail} 👎🏻` });
+        return;
+      }
+      const verificationCode = generateVerificationCode();
+      PasscodeVerificationData.userId = isMailExist._id;
+      PasscodeVerificationData.code = verificationCode;
+      console.log(PasscodeVerificationData.code);
+      const email = mail;
+      const respo = await sendPasswordResetEmailNodeMail(
+        email,
+        verificationCode
+      );
+      res.json(respo);
+    } catch (error) {
+      res.json({ message: error.message });
+    }
+  } catch (error) {}
+};
+const resetPassword = async (req, res) => {
+  const { passwordReset } = req.body;
+  console.log(PasscodeVerificationData);
+  if (passwordReset.resetCode == PasscodeVerificationData.code) {
+    const hash = await generatePasswordHash(passwordReset.newPassword);
+    const update = await userModel.findByIdAndUpdate(
+      PasscodeVerificationData.userId,
+      { password: hash },
+      { new: true }
+    );
+
+    PasscodeVerificationData = {};
+    res.json(update);
+  } else {
+    res.status(401).json({ message: "You entered the wrong reset code!.😣" });
+  }
+};
+module.exports = {
+  login,
+  signup,
+  addWatchLatter,
+  AllWatchLatter,
+  forgotPassword,
+  resetPassword,
+};

@@ -55,7 +55,7 @@ const MovieCard = ({ title, genre, rating, imageUrl, id, setAllMovies, movieList
 
       }
       if(response.status == 201){
-        toast.info("already in watchLatter", {
+        toast.info("Already in watch Latter", {
           position: "top-center",
           autoClose: 2500,
           hideProgressBar: true,

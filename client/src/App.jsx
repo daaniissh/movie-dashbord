@@ -12,6 +12,8 @@ import MovieWatchLater from './pages/watchLater';
 import Header from './component/Header';
 import SignupPage from './pages/signup';
 import LoginPage from './pages/login';
+import ForgotPassword from './pages/forgottpassword';
+import ResetPassword from './pages/Resetassword';
 
 const App = () => {
   return (
@@ -25,6 +27,8 @@ const App = () => {
       <Route path="/signUp" element={<SignupPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/movieWatchLater" element={<MovieWatchLater />} />
+      <Route path="/resetPassword" element={<ResetPassword />} />
+      <Route path="/ForgotPassword" element={<ForgotPassword />} />
       {/* <Route path="*" element={<NotFound />} /> */}
     </Routes>
     </>

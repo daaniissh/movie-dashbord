@@ -44,7 +44,7 @@ const MovieForm = () => {
   const getAllGenre = async () => {
     const response = await axios.get('http://localhost:3005/api/genres')
     setGenres(response.data)
-    
+
 
   }
   const handleTitleChange = (event) => {
@@ -52,12 +52,12 @@ const MovieForm = () => {
   };
 
   const handleRatingChange = (event) => {
-    
+
     setRating(event.target.value);
   };
 
   const handleGenreChange = (event) => {
-   
+
     const id = event.target.id;
     if (!genre.includes(id) && event.target.checked) {
       setGenre([...genre, id]);
@@ -72,13 +72,15 @@ const MovieForm = () => {
     const img = event.target.files[0];
     setImage(img);
     setUImage(URL.createObjectURL(img));
-  
+
   };
 
   const handleSubmit = async (event) => {
+
     event.preventDefault();
     let movieImageUrlCondition = movieId == 0 ? "" : uImage;
     if (movieId == 0) {
+      setLoading(true)
       var data = new FormData();
       data.append("file", image);
       data.append("upload_preset", "kbdydx0z");
@@ -114,8 +116,8 @@ const MovieForm = () => {
               genre
             },
           });
-          if ((response.status = 200)) {
-      
+          if (response.status === 200) {
+
             navigation('/')
           }
         }
@@ -142,7 +144,7 @@ const MovieForm = () => {
             imageName: uImage
           }
         })
-        if ((response.status == 200)) {
+        if (response.status == 200) {
           navigation('/')
         }
       }
@@ -231,12 +233,9 @@ const MovieForm = () => {
 
 
           </div>
-          <button
-            disabled={loading}
-            type="submit"
-            className="btn btn-primary mt-4 w-full"
-          >
-            {loading ? "Entering...." : "Submit"}
+          <button onClick={handleSubmit} className="btn bg-blue-600 text-white font-bold hover:text-black">
+            {loading && <span className="loading loading-spinner"></span>}
+            {loading ? "Loading..." : "Submit"}
           </button>
         </form>
 
